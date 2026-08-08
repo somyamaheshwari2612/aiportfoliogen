@@ -40,3 +40,36 @@ a { color: #fff; text-decoration: underline; }
 .bullet-list li {
   margin-bottom: 0.4rem;
 }
+    background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #1f2937;
+    min-height: 100vh;
+}
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+h1, h2 { color: #111827; }
+.summary { color: #374151; font-weight: 500; }
+.skill-list li { 
+    background: rgba(255, 255, 255, 0.5); 
+    border: 1px solid rgba(255, 255, 255, 0.6); 
+    backdrop-filter: blur(4px); 
+}
+.card, .item {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+.card:hover, .item:hover { 
+    background: rgba(255, 255, 255, 0.35); 
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15); 
+}
+.tech { color: #4f46e5; }
+.duration { color: #4b5563; }
+.contact a { color: #111827; font-weight: 700; }

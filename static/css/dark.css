@@ -32,3 +32,27 @@ a { color: #90caf9; }
 .bullet-list li {
   margin-bottom: 0.4rem;
 }
+body { background-color: #0b0f19; color: #e2e8f0; }
+h1, h2 { color: #ffffff; }
+h1 { 
+    background: linear-gradient(135deg, #38bdf8, #818cf8); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+.summary { color: #94a3b8; }
+.skill-list li { 
+    background: rgba(56, 189, 248, 0.1); 
+    color: #38bdf8; 
+    border: 1px solid rgba(56, 189, 248, 0.2); 
+}
+.card, .item { 
+    background: #111827; 
+    border: 1px solid #1f2937; 
+}
+.card:hover, .item:hover { 
+    border-color: #38bdf8; 
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.15); 
+}
+.tech { color: #818cf8; }
+.duration { color: #64748b; }
+.contact a { color: #38bdf8; }

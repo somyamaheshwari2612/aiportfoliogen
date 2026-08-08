@@ -16,7 +16,14 @@ def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
     try:
         env = Environment(loader=FileSystemLoader("templates"))
         template = env.get_template("portfolio.html")
-        rendered_html = template.render(data=portfolio_json, theme=theme)
+        
+        # Read CSS to inline it so the downloaded HTML works standalone
+        with open("static/css/portfolio_base.css", "r", encoding="utf-8") as f:
+            base_css = f.read()
+        with open(f"static/css/{theme}.css", "r", encoding="utf-8") as f:
+            theme_css = f.read()
+            
+        rendered_html = template.render(data=portfolio_json, theme=theme, base_css=base_css, theme_css=theme_css)
     except TemplateError as e:
         raise RuntimeError(f"Jinja2 template rendering failed: {e}")
 
