@@ -1,173 +1,197 @@
 """
 analysis/completeness.py
 
-Ye module resume ke JSON data ko dekh kar ek "Completeness Score"
-nikalta hai — matlab batata hai resume kitna complete hai.
-
-Important:
-- Isme Flask ka koi import nahi hai
-- Isme Gemini/API call nahi hai
-- Ye sirf ek dictionary (data) leta hai aur ek dictionary (result) return karta hai
+Algorithm for calculating resume completeness score (0-100) based on structured JSON data.
+Implements fair section weighting, score caps, title deduplication, optional bonus points,
+and fail-safe exception handling.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Set
 
 
-# Har section ke liye:
-# - "key" -> data me is naam se cheez dhundhi jayegi
-# - "label" -> user ko dikhane wala friendly naam
-# - "suggestion" -> agar ye section missing hai to kya suggest karna hai
-SECTION_RULES: List[Dict[str, Any]] = [
-    {
-        "key": "name",
-        "label": "Name",
-        "suggestion": "Apna pura naam add karo taaki visitors ko pata chale ye kiska portfolio hai.",
-    },
-    {
-        "key": "headline",
-        "label": "Headline",
-        "suggestion": "Ek chhota professional headline add karo (jaise 'Full Stack Developer | AI Enthusiast').",
-    },
-    {
-        "key": "email",
-        "label": "Email",
-        "suggestion": "Apna email address add karo taaki recruiters contact kar sakein.",
-    },
-    {
-        "key": "phone",
-        "label": "Phone",
-        "suggestion": "Direct contact ke liye phone number add karo.",
-    },
-    {
-        "key": "education",
-        "label": "Education",
-        "suggestion": "Apni education details add karo (degree, institution, year).",
-    },
-    {
-        "key": "experience",
-        "label": "Experience",
-        "suggestion": "Apna work experience ya internships add karo, chhota hi sahi.",
-    },
-    {
-        "key": "skills",
-        "label": "Skills",
-        "suggestion": "Apni technical aur soft skills list karo.",
-    },
-    {
-        "key": "projects",
-        "label": "Projects",
-        "suggestion": "2-3 projects dikhao, har ek ka chhota description ke saath.",
-    },
-    {
-        "key": "github",
-        "label": "GitHub",
-        "suggestion": "Apna GitHub profile link add karo taaki tumhara code dikhe.",
-    },
-    {
-        "key": "linkedin",
-        "label": "LinkedIn",
-        "suggestion": "Professional networking ke liye LinkedIn profile link add karo.",
-    },
-    {
-        "key": "achievements",
-        "label": "Achievements",
-        "suggestion": "Awards, hackathon wins ya doosri achievements mention karo.",
-    },
-    {
-        "key": "certifications",
-        "label": "Certifications",
-        "suggestion": "Apni profile strong banane ke liye relevant certifications add karo.",
-    },
-]
+# Base Weight Matrix (Sums to 100 points maximum base score)
+SECTION_WEIGHTS = {
+    "personal_info": 15,
+    "summary": 10,
+    "experience": 35,
+    "education": 15,
+    "skills": 15,
+    "projects": 10,
+}
+
+# Bonus Weight Cap for optional sections (e.g. social links, certifications)
+MAX_BONUS_POINTS = 15
 
 
 def _is_filled(value: Any) -> bool:
-    """
-    Check karta hai ki ye value 'present' maani jaye ya nahi.
-
-    - None -> False (nahi hai)
-    - Empty string ya sirf spaces wali string -> False
-    - Empty list ya dictionary -> False
-    - Kuch bhi aur (non-empty string/list/dict/number) -> True
-    """
+    """Helper to check if a value contains meaningful content."""
     if value is None:
         return False
     if isinstance(value, str):
         return len(value.strip()) > 0
-    if isinstance(value, (list, dict)):
+    if isinstance(value, (list, dict, set, tuple)):
         return len(value) > 0
     return True
 
 
-def calculate_completeness(data: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Resume ki completeness calculate karta hai.
+def calculate_completeness(portfolio_json: dict) -> int:
+    """Analyzes structured portfolio dictionary and returns a completeness score (0 to 100).
 
     Args:
-        data: Gemini se aayi structured resume JSON (Python dictionary).
-              Expected keys jaise:
-              {
-                  "name": "...",
-                  "headline": "...",
-                  "email": "...",
-                  "phone": "...",
-                  "education": [...],
-                  "experience": [...],
-                  "skills": [...],
-                  "projects": [...],
-                  "github": "...",
-                  "linkedin": "...",
-                  "achievements": [...],
-                  "certifications": [...]
-              }
+        portfolio_json (dict): Structured resume data (typically output from AI extraction).
 
     Returns:
-        {
-            "score": int,               # 0-100 ke beech percentage
-            "completed": [str, ...],    # jo sections present hain unke naam
-            "missing": [str, ...],      # jo sections missing hain unke naam
-            "suggestions": [str, ...]   # missing sections ke liye friendly tips
-        }
+        int: Completeness percentage integer between 0 and 100.
+
+    Raises:
+        TypeError: If portfolio_json is not a dictionary.
+        ValueError: If portfolio_json is empty.
     """
-    if not isinstance(data, dict):
-        raise TypeError("calculate_completeness ko ek dictionary chahiye input me")
+    if not isinstance(portfolio_json, dict):
+        raise TypeError("Input portfolio_json must be a dictionary.")
 
-    completed: List[str] = []
-    missing: List[str] = []
-    suggestions: List[str] = []
+    if not portfolio_json:
+        raise ValueError("Input portfolio_json is empty.")
 
-    for rule in SECTION_RULES:
-        value = data.get(rule["key"])
-        if _is_filled(value):
-            completed.append(rule["label"])
-        else:
-            missing.append(rule["label"])
-            suggestions.append(rule["suggestion"])
+    try:
+        total_score = 0.0
 
-    total_sections = len(SECTION_RULES)
-    score = round((len(completed) / total_sections) * 100)
+        # 1. Personal Info (Max 15 pts)
+        personal_info = portfolio_json.get("personal_info")
+        if isinstance(personal_info, dict) and personal_info:
+            p_score = 0.0
+            if _is_filled(personal_info.get("name")):
+                p_score += 5.0
+            if _is_filled(personal_info.get("email")):
+                p_score += 5.0
+            if _is_filled(personal_info.get("phone")):
+                p_score += 2.5
+            if _is_filled(personal_info.get("location")) or _is_filled(personal_info.get("headline")):
+                p_score += 2.5
+            total_score += min(p_score, SECTION_WEIGHTS["personal_info"])
+        elif _is_filled(portfolio_json.get("name")):
+            # Fallback for flat schema if name exists at root
+            total_score += 5.0
 
-    return {
-        "score": score,
-        "completed": completed,
-        "missing": missing,
-        "suggestions": suggestions,
-    }
+        # 2. Summary (Max 10 pts)
+        summary = portfolio_json.get("summary")
+        if _is_filled(summary) and isinstance(summary, str) and len(summary.strip()) >= 10:
+            total_score += SECTION_WEIGHTS["summary"]
 
+        # 3. Experience (Max 35 pts with Deduplication & Item Caps)
+        experience = portfolio_json.get("experience")
+        if isinstance(experience, list) and experience:
+            exp_score = 0.0
+            seen_experiences: Set[str] = set()
 
-# Ye neeche wala hissa sirf testing ke liye hai.
-# Jab tum seedha "python completeness.py" chalaogi, to ye check hoga.
-if __name__ == "__main__":
-    sample_data = {
-        "name": "Somya Maheshwari",
-        "email": "somya@example.com",
-        "skills": ["Python", "Flask", "Gemini API"],
-        "projects": [{"title": "AI Portfolio Generator"}],
-        # baaki fields yaha nahi diye — isse "missing" me aayenge
-    }
+            for item in experience:
+                if not isinstance(item, dict):
+                    continue
 
-    result = calculate_completeness(sample_data)
-    print("Score:", result["score"])
-    print("Completed:", result["completed"])
-    print("Missing:", result["missing"])
-    print("Suggestions:", result["suggestions"])
+                title = str(item.get("title", "")).strip().lower()
+                company = str(item.get("company", "")).strip().lower()
+                key = f"{title}|{company}"
+
+                # Deduplication check
+                if key in seen_experiences or key == "|":
+                    continue
+                seen_experiences.add(key)
+
+                # Award points per valid job entry (15 pts per entry up to cap)
+                entry_points = 10.0
+                if _is_filled(item.get("description")):
+                    entry_points += 5.0
+                exp_score += entry_points
+
+            total_score += min(exp_score, SECTION_WEIGHTS["experience"])
+
+        # 4. Education (Max 15 pts with Deduplication & Item Caps)
+        education = portfolio_json.get("education")
+        if isinstance(education, list) and education:
+            edu_score = 0.0
+            seen_education: Set[str] = set()
+
+            for item in education:
+                if not isinstance(item, dict):
+                    continue
+
+                degree = str(item.get("degree", "")).strip().lower()
+                institution = str(item.get("institution", "")).strip().lower()
+                key = f"{degree}|{institution}"
+
+                if key in seen_education or key == "|":
+                    continue
+                seen_education.add(key)
+
+                edu_score += 15.0
+
+            total_score += min(edu_score, SECTION_WEIGHTS["education"])
+
+        # 5. Skills (Max 15 pts with Deduplication & Item Caps)
+        skills = portfolio_json.get("skills")
+        if isinstance(skills, list) and skills:
+            skills_score = 0.0
+            seen_skills: Set[str] = set()
+
+            for skill in skills:
+                if not _is_filled(skill):
+                    continue
+                skill_name = str(skill).strip().lower()
+                if skill_name in seen_skills:
+                    continue
+                seen_skills.add(skill_name)
+                skills_score += 3.0  # 5 skills fill the 15 pts cap
+
+            total_score += min(skills_score, SECTION_WEIGHTS["skills"])
+
+        # 6. Projects (Max 10 pts with Deduplication & Item Caps)
+        projects = portfolio_json.get("projects")
+        if isinstance(projects, list) and projects:
+            proj_score = 0.0
+            seen_projects: Set[str] = set()
+
+            for proj in projects:
+                if not isinstance(proj, dict):
+                    continue
+                title = str(proj.get("title", "")).strip().lower()
+                if not title or title in seen_projects:
+                    continue
+                seen_projects.add(title)
+                proj_score += 5.0  # 2 projects fill the 10 pts cap
+
+            total_score += min(proj_score, SECTION_WEIGHTS["projects"])
+
+        # 7. Optional Bonus Fields (Max 15 pts bonus to compensate missing areas)
+        bonus_score = 0.0
+
+        # Social links / Web links
+        social_links = portfolio_json.get("social_links")
+        if isinstance(social_links, dict):
+            if _is_filled(social_links.get("linkedin")):
+                bonus_score += 4.0
+            if _is_filled(social_links.get("github")):
+                bonus_score += 4.0
+            if _is_filled(social_links.get("website")):
+                bonus_score += 2.0
+
+        # Root level github / linkedin fallback
+        if _is_filled(portfolio_json.get("github")) and not (isinstance(social_links, dict) and _is_filled(social_links.get("github"))):
+            bonus_score += 4.0
+        if _is_filled(portfolio_json.get("linkedin")) and not (isinstance(social_links, dict) and _is_filled(social_links.get("linkedin"))):
+            bonus_score += 4.0
+
+        # Achievements / Certifications
+        if _is_filled(portfolio_json.get("certifications")):
+            bonus_score += 3.0
+        if _is_filled(portfolio_json.get("achievements")):
+            bonus_score += 3.0
+
+        total_score += min(bonus_score, MAX_BONUS_POINTS)
+
+        # Enforce firm 0 to 100 range
+        final_score = int(round(min(100.0, max(0.0, total_score))))
+        return final_score
+
+    except Exception:
+        # Fail-safe crash prevention: return 0 for unparseable / malformed JSON
+        return 0
