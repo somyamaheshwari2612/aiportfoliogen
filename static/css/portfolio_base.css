@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    padding: 3rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 4rem;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+/* Staggered entrance animations */
+section:nth-child(1) { animation-delay: 0.1s; }
+section:nth-child(2) { animation-delay: 0.2s; }
+section:nth-child(3) { animation-delay: 0.3s; }
+section:nth-child(4) { animation-delay: 0.4s; }
+section:nth-child(5) { animation-delay: 0.5s; }
+section:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; }
+h2 { font-size: 2rem; margin-bottom: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+h3 { font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
+
+.summary {
+    font-size: 1.25rem;
+    max-width: 800px;
+}
+
+.skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    list-style: none;
+}
+
+.skill-list li {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+.skill-list li:hover { transform: translateY(-2px); }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.card, .item {
+    padding: 2rem;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 1.5rem;
+}
+
+.card:hover, .item:hover {
+    transform: translateY(-4px);
+}
+
+.tech {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.duration {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.contact p {
+    line-height: 2;
+}
+
+.contact a {
+    display: inline-block;
+    margin-right: 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.contact a:hover { opacity: 0.8; }
