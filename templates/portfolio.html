@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ data.personal_info.name }} — Portfolio</title>
-  <link rel="stylesheet" href="static/css/base.css">
-  <link rel="stylesheet" href="static/css/{{ theme }}.css">
+  <style>
+    {{ base_css | safe }}
+    {{ theme_css | safe }}
+  </style>
 </head>
 <body>
 

@@ -1,6 +1,20 @@
-body { color: #333; background: #fafafa; }
-h1, h2 { color: #000; font-weight: 300; }
-h2 { border-color: #ccc; }
-.skill-list li { background: transparent; border: 1px solid #ccc; }
-.card { background: transparent; border: 1px solid #ddd; }
-a { color: #000; }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+body { background-color: #ffffff; color: #111111; }
+h1, h2 { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: -0.02em; }
+.summary { color: #555555; }
+.skill-list li { background: transparent; border: 1px solid #111; color: #111; border-radius: 4px; }
+.card, .item { 
+    background: transparent; 
+    border-left: 3px solid #111; 
+    border-radius: 0; 
+    padding: 1.5rem 2rem; 
+}
+.card:hover, .item:hover { 
+    background: #fafafa; 
+    transform: translateX(10px); 
+}
+.tech { color: #666; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+.duration { color: #666; font-style: italic; }
+.contact a { color: #111; border-bottom: 1px solid #111; padding-bottom: 2px; }
+.contact a:hover { text-decoration: none; border-bottom-width: 2px; }

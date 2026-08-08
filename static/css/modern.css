@@ -1,5 +1,27 @@
-body { color: #222; background: #fff; }
-h1, h2 { color: #2b2d42; }
-.skill-list li { background: #edf2f4; }
-.card { background: #f8f9fa; border: 1px solid #eee; }
-a { color: #ef233c; }
+body {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+h1, h2 { color: #1e293b; }
+h1 { 
+    background: linear-gradient(135deg, #2563eb, #8b5cf6); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+.summary { color: #475569; }
+.skill-list li { 
+    background: #e0e7ff; 
+    color: #4338ca; 
+}
+.card, .item { 
+    background: #ffffff; 
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); 
+    border: 1px solid #e2e8f0; 
+}
+.card:hover, .item:hover { 
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+    border-color: #cbd5e1; 
+}
+.tech { color: #2563eb; }
+.duration { color: #64748b; }
+.contact a { color: #2563eb; }

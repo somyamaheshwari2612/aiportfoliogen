@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show results
                 loaderContainer.style.display = 'none';
                 resultsArea.style.display = 'block';
+                generateBtn.disabled = false; // Re-enable button for regeneration
                 
                 // Animate completeness meter
                 setTimeout(() => {
@@ -108,4 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
             generateBtn.disabled = false;
         }
     });
+    
+    // PDF Button "Coming Soon" intercept
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            downloadPdfBtn.textContent = 'Coming soon!';
+            downloadPdfBtn.style.cursor = 'not-allowed';
+            downloadPdfBtn.style.opacity = '0.7';
+        });
+    }
 });
