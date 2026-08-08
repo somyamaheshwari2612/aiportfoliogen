@@ -1,33 +1,52 @@
-from jinja2 import Environment, FileSystemLoader
+import os
+from jinja2 import Environment, FileSystemLoader, TemplateError
 
 VALID_THEMES = ["modern", "minimal", "glass", "dark"]
 
-def generate_portfolio(data, theme="modern", output_path="portfolio.html", template_name="portfolio.html"):
+
+def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
     """
-    data: dict (parsed Gemini JSON) - from Member 1
+    portfolio_json: dict - structured data from Gemini (Teammate 2's output)
     theme: 'modern' | 'minimal' | 'glass' | 'dark'
-    output_path: file to save final HTML to
-    template_name: which template to render (portfolio.html or preview.html)
+    Returns: absolute path to the saved portfolio.html file
     """
     if theme not in VALID_THEMES:
-        theme = "modern"
+        raise ValueError(f"Unsupported theme '{theme}'. Must be one of {VALID_THEMES}")
 
-    env = Environment(loader=FileSystemLoader("templates"))
-    template = env.get_template(template_name)
+    try:
+        env = Environment(loader=FileSystemLoader("templates"))
+        template = env.get_template("portfolio.html")
+        rendered_html = template.render(data=portfolio_json, theme=theme)
+    except TemplateError as e:
+        raise RuntimeError(f"Jinja2 template rendering failed: {e}")
 
-    rendered_html = template.render(data=data, theme=theme)
+    output_dir = "output"
+    output_path = os.path.join(output_dir, "portfolio.html")
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(rendered_html)
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(rendered_html)
+    except IOError as e:
+        raise IOError(f"Failed to write portfolio.html: {e}")
 
-    print(f"Portfolio generated: {output_path} (theme: {theme})")
-    return output_path
+    return os.path.abspath(output_path)
 
 
 if __name__ == "__main__":
+    # PLACEHOLDER — matches real schema from INTERFACES.md
     sample_data = {
-        "name": "Test User",
-        "headline": "Aspiring Developer",
+        "personal_info": {
+            "name": "Test User",
+            "email": "test@test.com",
+            "location": "New York"
+        },
+        "social_links": {
+            "linkedin": "https://linkedin.com/in/testuser",
+            "github": "https://github.com/testuser",
+            "website": "",
+            "other": []
+        },
         "summary": "A short bio goes here for testing purposes.",
         "skills": ["Python", "HTML", "CSS", "Jinja2"],
         "education": [
@@ -36,10 +55,9 @@ if __name__ == "__main__":
         "experience": [],
         "projects": [
             {"title": "Portfolio Generator", "description": "This exact project.", "technologies": "Python, Jinja2"}
-        ],
-        "achievements": ["Hackathon Winner 2025"],
-        "contact": {"email": "test@test.com", "github": "github.com/test"}
+        ]
     }
 
     for t in VALID_THEMES:
-        generate_portfolio(sample_data, theme=t, output_path=f"portfolio_{t}.html")
+        path = generate_portfolio(sample_data, theme=t)
+        print(f"Generated: {path}")

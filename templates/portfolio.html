@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ data.name }} — Portfolio</title>
+  <title>{{ data.personal_info.name }} — Portfolio</title>
   <link rel="stylesheet" href="static/css/base.css">
   <link rel="stylesheet" href="static/css/{{ theme }}.css">
 </head>
 <body>
 
-  <!-- HERO -->
   <section class="hero">
-    <h1>{{ data.name or "Your Name" }}</h1>
-    {% if data.headline %}<p class="headline">{{ data.headline }}</p>{% endif %}
+    <h1>{{ data.personal_info.name or "Your Name" }}</h1>
     {% if data.summary %}<p class="summary">{{ data.summary }}</p>{% endif %}
   </section>
 
@@ -33,7 +31,7 @@
         <div class="card">
           <h3>{{ proj.title }}</h3>
           <p>{{ proj.description }}</p>
-          <span class="tech">{{ proj.technologies }}</span>
+          {% if proj.technologies %}<span class="tech">{{ proj.technologies }}</span>{% endif %}
         </div>
       {% endfor %}
     </div>
@@ -46,7 +44,7 @@
     {% for exp in data.experience %}
       <div class="item">
         <h3>{{ exp.role }} — {{ exp.company }}</h3>
-        <span class="duration">{{ exp.duration }}</span>
+        {% if exp.duration %}<span class="duration">{{ exp.duration }}</span>{% endif %}
         <p>{{ exp.description }}</p>
       </div>
     {% endfor %}
@@ -64,21 +62,15 @@
   </section>
   {% endif %}
 
-  {% if data.achievements %}
-  <section class="achievements">
-    <h2>Achievements</h2>
-    <ul>{% for item in data.achievements %}<li>{{ item }}</li>{% endfor %}</ul>
-  </section>
-  {% endif %}
-
-  {% if data.contact %}
+  {% if data.personal_info or data.social_links %}
   <section class="contact">
     <h2>Contact</h2>
     <p>
-      {% if data.contact.email %}Email: {{ data.contact.email }}<br>{% endif %}
-      {% if data.contact.phone %}Phone: {{ data.contact.phone }}<br>{% endif %}
-      {% if data.contact.linkedin %}<a href="{{ data.contact.linkedin }}">LinkedIn</a>{% endif %}
-      {% if data.contact.github %}<a href="{{ data.contact.github }}">GitHub</a>{% endif %}
+      {% if data.personal_info.email %}Email: {{ data.personal_info.email }}<br>{% endif %}
+      {% if data.personal_info.location %}Location: {{ data.personal_info.location }}<br>{% endif %}
+      {% if data.social_links.linkedin %}<a href="{{ data.social_links.linkedin }}">LinkedIn</a> {% endif %}
+      {% if data.social_links.github %}<a href="{{ data.social_links.github }}">GitHub</a> {% endif %}
+      {% if data.social_links.website %}<a href="{{ data.social_links.website }}">Website</a>{% endif %}
     </p>
   </section>
   {% endif %}
