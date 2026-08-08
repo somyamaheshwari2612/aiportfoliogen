@@ -1,0 +1,30 @@
+* { box-sizing: border-box; }
+body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+}
+.hero { text-align: center; margin-bottom: 2.5rem; }
+.hero h1 { margin-bottom: 0.3rem; font-size: 2.2rem; }
+.headline { font-style: italic; margin-bottom: 0.5rem; }
+.summary { max-width: 600px; margin: 0 auto; }
+
+section { margin-bottom: 2.5rem; }
+h2 { border-bottom: 2px solid; padding-bottom: 0.3rem; margin-bottom: 1rem; }
+
+.skill-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-list li { padding: 0.4rem 0.9rem; border-radius: 20px; }
+
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.card { padding: 1rem; border-radius: 10px; }
+.item { margin-bottom: 1.2rem; }
+.duration, .tech { font-size: 0.85rem; opacity: 0.75; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  body { padding: 1.2rem; }
+  .grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.7rem; }
+}

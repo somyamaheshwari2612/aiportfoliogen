@@ -1,0 +1,16 @@
+body {
+  color: #222;
+  background: linear-gradient(135deg, #a8c0ff, #3f2b96);
+  min-height: 100vh;
+}
+h1, h2 { color: #fff; }
+.hero, .skills, .projects, .experience, .education, .achievements, .contact {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.skill-list li { background: rgba(255,255,255,0.25); color: #fff; }
+.card { background: rgba(255,255,255,0.2); }
+a { color: #fff; text-decoration: underline; }
