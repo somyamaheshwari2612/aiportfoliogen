@@ -1,0 +1,6 @@
+Flask==3.0.3
+python-dotenv==1.0.1
+google-genai==0.3.0
+pypdf==4.2.0
+python-docx==1.1.2
+dotenv==1.1.0

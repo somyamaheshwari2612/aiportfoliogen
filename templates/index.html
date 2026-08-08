@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Portfolio Generator</title>
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Portfolio Generator</h1>
+            <p>Transform your resume into a stunning, professional portfolio in seconds.</p>
+        </header>
+        
+        <main class="main-content">
+            <!-- Left Column: Inputs -->
+            <div class="panel">
+                <form id="generator-form">
+                    <h2 class="panel-title">1. Upload Resume</h2>
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Click or drag resume here</div>
+                        <div class="upload-subtext">Supported formats: .txt, .pdf, .docx</div>
+                        <input type="file" id="file-input" accept=".txt,.pdf,.docx" required>
+                    </div>
+                    
+                    <h2 class="panel-title" style="margin-top: 2.5rem;">2. Select Theme</h2>
+                    <div class="theme-grid">
+                        {% for theme in themes %}
+                        <div class="theme-card {% if loop.first %}selected{% endif %}" data-theme="{{ theme }}">
+                            <div class="theme-preview"></div>
+                            <div class="theme-name">{{ theme }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="generate-btn" disabled>Generate Portfolio</button>
+                </form>
+            </div>
+            
+            <!-- Right Column: Outputs -->
+            <div class="panel">
+                <h2 class="panel-title">Preview & Results</h2>
+                
+                <div id="loader-container" class="loader-container">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing your resume and building your portfolio...</p>
+                </div>
+                
+                <div id="results-area" class="results-area">
+                    <div class="completeness-meter">
+                        <h3>Resume Completeness Match</h3>
+                        <p style="color: var(--text-muted); font-size: 0.875rem;">How well your portfolio covers your resume content</p>
+                        <div class="meter-bg">
+                            <div class="meter-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="{{ url_for('download_html') }}" class="btn-outline">Download HTML</a>
+                        <a href="{{ url_for('download_pdf') }}" class="btn-outline">Download PDF</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Interactive Logic -->
+    <script src="{{ url_for('static', filename='js/preview.js') }}"></script>
+</body>
+</html>

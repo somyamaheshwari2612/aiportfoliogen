@@ -1,0 +1,42 @@
+John Doe
+Software Engineer
+Email: john.doe@example.com | Phone: (555) 123-4567
+Location: San Francisco, CA
+LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe
+
+PROFESSIONAL SUMMARY
+Highly motivated Software Engineer with 4 years of experience building scalable web applications. Passionate about AI, cloud architecture, and creating seamless user experiences. Strong background in Python, JavaScript, and cloud deployments.
+
+EXPERIENCE
+Software Engineer - Tech Solutions Inc.
+Jan 2021 - Present
+- Developed and maintained a microservices-based backend using Python and Flask, serving over 100,000 daily active users.
+- Reduced API response times by 30% by optimizing database queries and implementing Redis caching.
+- Collaborated with frontend engineers to integrate RESTful APIs into a modern React application.
+
+Junior Web Developer - Creative Web Agency
+Jun 2019 - Dec 2020
+- Built responsive websites for small businesses using HTML, CSS, and Vanilla JavaScript.
+- Automated client onboarding workflows using Node.js, saving 10 hours of manual work per week.
+- Managed version control and deployment pipelines using Git and GitHub Actions.
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology
+Graduated: May 2019
+- GPA: 3.8/4.0
+- Relevant Coursework: Data Structures, Algorithms, Artificial Intelligence, Database Management.
+
+SKILLS
+Programming Languages: Python, JavaScript, SQL, HTML, CSS
+Frameworks/Libraries: Flask, React, Express.js
+Tools & Technologies: Git, Docker, Redis, AWS, Linux
+Soft Skills: Agile Development, Technical Writing, Problem Solving
+
+PROJECTS
+AI Portfolio Generator (Python, Flask, Google Gemini)
+- Co-developed a web application that takes a resume file and generates a stylized portfolio website using AI for content extraction.
+- Designed the backend orchestration pipeline integrating multiple sub-modules.
+
+Weather Dashboard (React, OpenWeather API)
+- Built a front-end web app that allows users to search for cities and displays real-time weather forecasts with interactive charts.
