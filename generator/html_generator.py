@@ -1,22 +1,63 @@
 import os
-from flask import render_template
-from config import Config
+from jinja2 import Environment, FileSystemLoader, TemplateError
 
-def generate_portfolio(portfolio_json, theme="modern"):
+VALID_THEMES = ["modern", "minimal", "glass", "dark"]
+
+
+def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
     """
-    TODO(Generator Team): Implement proper jinja variables and theming logic.
-    MOCK IMPLEMENTATION: Renders the template for end-to-end pipeline testing.
+    portfolio_json: dict - structured data from Gemini (Teammate 2's output)
+    theme: 'modern' | 'minimal' | 'glass' | 'dark'
+    Returns: absolute path to the saved portfolio.html file
     """
-    print("⚠️ WARNING: generate_portfolio() is currently using a MOCK implementation.")
-    # Render the template using Flask/Jinja
-    html_content = render_template("portfolio.html", portfolio=portfolio_json, theme=theme)
-    
-    # Write to output folder
-    if not os.path.exists(Config.OUTPUT_FOLDER):
-        os.makedirs(Config.OUTPUT_FOLDER)
-        
-    output_html_path = os.path.join(Config.OUTPUT_FOLDER, "portfolio.html")
-    with open(output_html_path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-        
-    return output_html_path
+    if theme not in VALID_THEMES:
+        raise ValueError(f"Unsupported theme '{theme}'. Must be one of {VALID_THEMES}")
+
+    try:
+        env = Environment(loader=FileSystemLoader("templates"))
+        template = env.get_template("portfolio.html")
+        rendered_html = template.render(data=portfolio_json, theme=theme)
+    except TemplateError as e:
+        raise RuntimeError(f"Jinja2 template rendering failed: {e}")
+
+    output_dir = "output"
+    output_path = os.path.join(output_dir, "portfolio.html")
+
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(rendered_html)
+    except IOError as e:
+        raise IOError(f"Failed to write portfolio.html: {e}")
+
+    return os.path.abspath(output_path)
+
+
+if __name__ == "__main__":
+    # PLACEHOLDER — matches real schema from INTERFACES.md
+    sample_data = {
+        "personal_info": {
+            "name": "Test User",
+            "email": "test@test.com",
+            "location": "New York"
+        },
+        "social_links": {
+            "linkedin": "https://linkedin.com/in/testuser",
+            "github": "https://github.com/testuser",
+            "website": "",
+            "other": []
+        },
+        "summary": "A short bio goes here for testing purposes.",
+        "skills": ["Python", "HTML", "CSS", "Jinja2"],
+        "education": [
+            {"degree": "B.Tech CSE", "institution": "ABC University", "year": "2025"}
+        ],
+        "experience": [],
+        "projects": [
+            {"title": "Portfolio Generator", "description": "This exact project.", "technologies": "Python, Jinja2"}
+        ]
+    }
+
+    for t in VALID_THEMES:
+        path = generate_portfolio(sample_data, theme=t)
+        print(f"Generated: {path}")

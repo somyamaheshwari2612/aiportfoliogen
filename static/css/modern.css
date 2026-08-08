@@ -1,1 +1,5 @@
-/* Minimal css file placeholder */
+body { color: #222; background: #fff; }
+h1, h2 { color: #2b2d42; }
+.skill-list li { background: #edf2f4; }
+.card { background: #f8f9fa; border: 1px solid #eee; }
+a { color: #ef233c; }
