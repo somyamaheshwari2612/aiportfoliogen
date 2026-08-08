@@ -75,6 +75,36 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsArea.style.display = 'none';
         loaderContainer.style.display = 'block';
         
+        // Dynamic Loading State
+        const loadingText = document.getElementById('loading-text');
+        const loadingProgress = document.getElementById('loading-progress');
+        const loadingMessages = [
+            "Extracting resume data...",
+            "AI is crafting your portfolio...",
+            "Applying design systems...",
+            "Polishing layout...",
+            "Finalizing your website..."
+        ];
+        
+        let messageIndex = 0;
+        let progress = 0;
+        
+        if(loadingProgress) loadingProgress.style.width = '0%';
+        if(loadingText) loadingText.textContent = loadingMessages[0];
+        
+        const loadingInterval = setInterval(() => {
+            messageIndex = (messageIndex + 1) % loadingMessages.length;
+            if(loadingText) loadingText.textContent = loadingMessages[messageIndex];
+        }, 1500);
+        
+        const progressInterval = setInterval(() => {
+            if (progress < 90) { // Fake progress stops at 90% until fetch resolves
+                progress += Math.random() * 15 + 5; 
+                if (progress > 90) progress = 90;
+                if(loadingProgress) loadingProgress.style.width = `${progress}%`;
+            }
+        }, 500);
+        
         const formData = new FormData();
         formData.append('resume', selectedFile);
         formData.append('theme', selectedTheme);
@@ -87,22 +117,30 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const data = await response.json();
             
+            clearInterval(loadingInterval);
+            clearInterval(progressInterval);
+            if(loadingProgress) loadingProgress.style.width = '100%';
+            
             if (data.success) {
-                // Show results
-                loaderContainer.style.display = 'none';
-                resultsArea.style.display = 'block';
-                generateBtn.disabled = false; // Re-enable button for regeneration
-                
-                // Animate completeness meter
+                // Show results after a tiny delay so they see 100%
                 setTimeout(() => {
-                    meterFill.style.width = `${data.completeness}%`;
-                }, 100);
+                    loaderContainer.style.display = 'none';
+                    resultsArea.style.display = 'block';
+                    generateBtn.disabled = false; // Re-enable button for regeneration
+                    
+                    // Animate completeness meter
+                    setTimeout(() => {
+                        meterFill.style.width = `${data.completeness}%`;
+                    }, 100);
+                }, 400);
             } else {
                 alert('Generation failed: ' + data.error);
                 loaderContainer.style.display = 'none';
                 generateBtn.disabled = false;
             }
         } catch (error) {
+            clearInterval(loadingInterval);
+            clearInterval(progressInterval);
             alert('An error occurred during generation.');
             console.error(error);
             loaderContainer.style.display = 'none';

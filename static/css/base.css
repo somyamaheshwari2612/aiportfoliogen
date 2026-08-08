@@ -174,32 +174,86 @@ header p {
 }
 
 .theme-preview {
-    height: 80px;
+    height: 120px;
     border-radius: 6px;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Base Mini-Layout structure inside the preview */
+.theme-preview::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 50%;
+    height: 12px;
+    border-radius: 2px;
+}
+.theme-preview::after {
+    content: '';
+    position: absolute;
+    top: 42px;
+    left: 16px;
+    right: 16px;
+    height: 48px;
+    border-radius: 6px;
 }
 
 /* Modern Theme Preview */
 .theme-card[data-theme="modern"] .theme-preview {
-    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
+.theme-card[data-theme="modern"] .theme-preview::before {
+    background: linear-gradient(135deg, #2563eb, #8b5cf6);
+}
+.theme-card[data-theme="modern"] .theme-preview::after {
+    background: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+}
+
 /* Minimal Theme Preview */
 .theme-card[data-theme="minimal"] .theme-preview {
     background: #ffffff;
-    border: 1px solid #000000;
+    border: 1px solid #e2e8f0;
 }
+.theme-card[data-theme="minimal"] .theme-preview::before {
+    background: #111111;
+    height: 8px; /* simulate serif heading */
+}
+.theme-card[data-theme="minimal"] .theme-preview::after {
+    background: transparent;
+    border-left: 2px solid #111;
+    border-radius: 0;
+}
+
 /* Glass Theme Preview */
 .theme-card[data-theme="glass"] .theme-preview {
-    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.8);
+    background: linear-gradient(135deg, #a8c0ff, #3f2b96);
 }
+.theme-card[data-theme="glass"] .theme-preview::before {
+    background: #ffffff;
+}
+.theme-card[data-theme="glass"] .theme-preview::after {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(31, 38, 135, 0.1);
+}
+
 /* Dark Theme Preview */
 .theme-card[data-theme="dark"] .theme-preview {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+    background: #0b0f19;
+    border: 1px solid #1f2937;
+}
+.theme-card[data-theme="dark"] .theme-preview::before {
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+}
+.theme-card[data-theme="dark"] .theme-preview::after {
+    background: #111827;
+    border: 1px solid #1f2937;
 }
 
 .theme-name {

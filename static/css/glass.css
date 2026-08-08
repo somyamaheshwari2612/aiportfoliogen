@@ -1,75 +1,31 @@
 * { box-sizing: border-box; }
 body {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
-  color: #222;
+  color: #fff;
   background: linear-gradient(135deg, #a8c0ff, #3f2b96);
   min-height: 100vh;
 }
-.hero, .skills, .projects, .experience, .education, .contact {
+.card, .item, .hero, .skills, .projects, .experience, .education, .contact {
   background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 16px;
-  padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
-.hero { text-align: center; margin-bottom: 2.5rem; }
-.hero h1 { margin-bottom: 0.3rem; font-size: 2.2rem; color: #fff; }
-.summary { max-width: 600px; margin: 0 auto; }
-section { margin-bottom: 2.5rem; }
-h2 { border-bottom: 2px solid #fff; padding-bottom: 0.3rem; margin-bottom: 1rem; color: #fff; }
-.skill-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.skill-list li { padding: 0.4rem 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.25); color: #fff; }
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-.card { padding: 1rem; border-radius: 10px; background: rgba(255,255,255,0.2); }
-.item { margin-bottom: 1.2rem; }
-.duration, .tech { font-size: 0.85rem; opacity: 0.85; }
-a { color: #fff; text-decoration: underline; }
-@media (max-width: 600px) {
-  body { padding: 1.2rem; }
-  .grid { grid-template-columns: 1fr; }
-  .hero h1 { font-size: 1.7rem; }
-}
-.bullet-list {
-  margin-top: 0.5rem;
-  padding-left: 1.2rem;
-}
-.bullet-list li {
-  margin-bottom: 0.4rem;
-}
-    background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    color: #1f2937;
-    min-height: 100vh;
-}
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-h1, h2 { color: #111827; }
-.summary { color: #374151; font-weight: 500; }
+h1, h2, h3 { color: #fff; }
+.summary { color: #f1f5f9; font-weight: 500; }
 .skill-list li { 
-    background: rgba(255, 255, 255, 0.5); 
-    border: 1px solid rgba(255, 255, 255, 0.6); 
-    backdrop-filter: blur(4px); 
-}
-.card, .item {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  background: rgba(255, 255, 255, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.4); 
+  color: #fff;
 }
 .card:hover, .item:hover { 
-    background: rgba(255, 255, 255, 0.35); 
-    transform: translateY(-5px); 
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15); 
+  background: rgba(255, 255, 255, 0.25); 
+  transform: translateY(-5px); 
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2); 
 }
-.tech { color: #4f46e5; }
-.duration { color: #4b5563; }
-.contact a { color: #111827; font-weight: 700; }
+.tech { color: #e2e8f0; }
+.duration { color: #cbd5e1; }
+.contact a { color: #fff; font-weight: 700; }
