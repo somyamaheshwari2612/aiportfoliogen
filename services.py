@@ -1,5 +1,5 @@
 import os
-from input.parser import parse_resume
+from document_input.parser import parse_resume
 from ai.gemini import generate_portfolio_json
 from analysis.completeness import calculate_completeness
 from generator.html_generator import generate_portfolio
@@ -25,25 +25,38 @@ def generate_resume_portfolio(file, theme):
     5. Generate HTML
     6. Save HTML to output
     """
-    # 1. Save
-    filepath = save_uploaded_file(file)
-    
-    # 2. Parse
-    resume_text = parse_resume(filepath)
-    
-    # 3. AI
-    portfolio_json = generate_portfolio_json(resume_text, PORTFOLIO_GENERATION_PROMPT)
-    
-    # 4. Completeness
-    completeness = calculate_completeness(portfolio_json)
-    
-    # 5. Generate & Save HTML
-    generate_portfolio(portfolio_json, theme=theme)
-    
-    # We could also generate PDF here in the future
-    
-    return {
-        "success": True,
-        "completeness": completeness,
-        "theme": theme
-    }
+    filepath = None
+    try:
+        # 1. Save
+        filepath = save_uploaded_file(file)
+        
+        # 2. Parse
+        resume_text = parse_resume(filepath)
+        
+        # 3. AI
+        portfolio_json = generate_portfolio_json(resume_text, PORTFOLIO_GENERATION_PROMPT)
+        
+        # 4. Completeness
+        result = calculate_completeness(portfolio_json)
+        completeness = result["score"]
+        missing = result["missing"]
+        
+        # 5. Generate & Save HTML
+        output_path = generate_portfolio(portfolio_json, theme=theme)
+        
+        # We could also generate PDF here in the future
+        
+        return {
+            "success": True,
+            "completeness": completeness,
+            "missing": missing,
+            "theme": theme,
+            "output_path": output_path
+        }
+    finally:
+        # Cleanup temporary file to prevent disk exhaustion
+        if filepath and os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except OSError:
+                pass

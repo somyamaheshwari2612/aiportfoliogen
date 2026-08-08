@@ -39,13 +39,13 @@ h1, h2 { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacin
 .summary { color: #555555; }
 .skill-list li { background: transparent; border: 1px solid #111; color: #111; border-radius: 4px; }
 .card, .item { 
-    background: transparent; 
+    background: #f7f7f9; 
     border-left: 3px solid #111; 
-    border-radius: 0; 
+    border-radius: 4px; 
     padding: 1.5rem 2rem; 
 }
 .card:hover, .item:hover { 
-    background: #fafafa; 
+    background: #eeeeee; 
     transform: translateX(10px); 
 }
 .tech { color: #666; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
