@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ data.personal_info.name }} — Portfolio</title>
-  <link rel="stylesheet" href="static/css/base.css">
   <link rel="stylesheet" href="static/css/{{ theme }}.css">
 </head>
 <body>
@@ -39,17 +38,25 @@
   {% endif %}
 
   {% if data.experience %}
-  <section class="experience">
-    <h2>Experience</h2>
-    {% for exp in data.experience %}
-      <div class="item">
-        <h3>{{ exp.role }} — {{ exp.company }}</h3>
-        {% if exp.duration %}<span class="duration">{{ exp.duration }}</span>{% endif %}
+<section class="experience">
+  <h2>Experience</h2>
+  {% for exp in data.experience %}
+    <div class="item">
+      <h3>{% if exp.role %}{{ exp.role }} — {% endif %}{{ exp.company }}</h3>
+      {% if exp.duration %}<span class="duration">{{ exp.duration }}</span>{% endif %}
+      {% if exp.description is string %}
         <p>{{ exp.description }}</p>
-      </div>
-    {% endfor %}
-  </section>
-  {% endif %}
+      {% elif exp.description %}
+        <ul class="bullet-list">
+          {% for bullet in exp.description %}
+            <li>{{ bullet }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endfor %}
+</section>
+{% endif %}
 
   {% if data.education %}
   <section class="education">

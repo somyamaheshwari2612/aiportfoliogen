@@ -1,16 +1,42 @@
+* { box-sizing: border-box; }
 body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
   color: #222;
   background: linear-gradient(135deg, #a8c0ff, #3f2b96);
   min-height: 100vh;
 }
-h1, h2 { color: #fff; }
-.hero, .skills, .projects, .experience, .education, .achievements, .contact {
+.hero, .skills, .projects, .experience, .education, .contact {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
-.skill-list li { background: rgba(255,255,255,0.25); color: #fff; }
-.card { background: rgba(255,255,255,0.2); }
+.hero { text-align: center; margin-bottom: 2.5rem; }
+.hero h1 { margin-bottom: 0.3rem; font-size: 2.2rem; color: #fff; }
+.summary { max-width: 600px; margin: 0 auto; }
+section { margin-bottom: 2.5rem; }
+h2 { border-bottom: 2px solid #fff; padding-bottom: 0.3rem; margin-bottom: 1rem; color: #fff; }
+.skill-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-list li { padding: 0.4rem 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.25); color: #fff; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.card { padding: 1rem; border-radius: 10px; background: rgba(255,255,255,0.2); }
+.item { margin-bottom: 1.2rem; }
+.duration, .tech { font-size: 0.85rem; opacity: 0.85; }
 a { color: #fff; text-decoration: underline; }
+@media (max-width: 600px) {
+  body { padding: 1.2rem; }
+  .grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.7rem; }
+}
+.bullet-list {
+  margin-top: 0.5rem;
+  padding-left: 1.2rem;
+}
+.bullet-list li {
+  margin-bottom: 0.4rem;
+}
