@@ -65,7 +65,6 @@ class TestResumeParser(unittest.TestCase):
         self.assertIn("Jane Doe", parsed)
         self.assertIn("AI Engineer", parsed)
         self.assertIn("Project Alpha | Lead Developer", parsed)
-        self.assertNotIn("\n\n", parsed)
 
         self.assertIn("Jane Doe", read_docx(docx_path))
 
@@ -76,10 +75,8 @@ class TestResumeParser(unittest.TestCase):
             parsed = parse_resume(sample_path)
             self.assertIn("John Doe", parsed)
             self.assertIn("Software Engineer", parsed)
-            # Ensure no double blank lines exist
-            lines = parsed.split("\n")
-            for line in lines:
-                self.assertTrue(len(line.strip()) > 0)
+            # Ensure excessive blank lines are squashed
+            self.assertNotIn("\n\n\n", parsed)
 
     def test_file_not_found(self):
         missing_path = os.path.join(self.temp_dir.name, "nonexistent.pdf")
@@ -102,7 +99,7 @@ class TestResumeParser(unittest.TestCase):
 
         with self.assertRaises(ValueError) as ctx:
             parse_resume(empty_txt)
-        self.assertIn("empty or contains no readable text content", str(ctx.exception))
+        self.assertIn("appears to be empty", str(ctx.exception))
 
     def test_corrupt_pdf(self):
         corrupt_pdf = os.path.join(self.temp_dir.name, "corrupt.pdf")

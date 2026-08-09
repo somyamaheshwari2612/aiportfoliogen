@@ -15,6 +15,40 @@ def save_uploaded_file(file):
         file.save(f)
     return filepath
 
+def sanitize_portfolio_data(data: dict) -> dict:
+    """Enforces strictly correct types and cleans up hallucinated 'None' strings."""
+    if not isinstance(data, dict):
+        return {}
+        
+    # Enforce lists
+    for key in ["skills", "experience", "education", "projects", "certifications", "achievements", "languages"]:
+        if not isinstance(data.get(key), list):
+            data[key] = []
+            
+    # Clean up project technologies to be lists
+    for proj in data.get("projects", []):
+        if not isinstance(proj, dict):
+            continue
+        techs = proj.get("technologies")
+        if techs and isinstance(techs, str):
+            proj["technologies"] = [t.strip() for t in techs.split(",")]
+        elif not isinstance(techs, list):
+            proj["technologies"] = []
+
+    # Enforce dicts
+    for key in ["personal_info", "social_links"]:
+        if not isinstance(data.get(key), dict):
+            data[key] = {}
+            
+    # Clean up "None" links
+    socials = data.get("social_links", {})
+    for key in list(socials.keys()):
+        val = socials.get(key)
+        if isinstance(val, str) and val.strip().lower() == "none":
+            socials[key] = ""
+            
+    return data
+
 def generate_resume_portfolio(file, theme):
     """
     Orchestrates the pipeline:
@@ -35,6 +69,9 @@ def generate_resume_portfolio(file, theme):
         
         # 3. AI
         portfolio_json = generate_portfolio_json(resume_text, PORTFOLIO_GENERATION_PROMPT)
+        
+        # 3.5 Sanitize Types
+        portfolio_json = sanitize_portfolio_data(portfolio_json)
         
         # 4. Completeness
         result = calculate_completeness(portfolio_json)

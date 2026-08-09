@@ -21,17 +21,17 @@ def read_txt(path: str) -> str:
     if not os.path.exists(path) or not os.path.isfile(path):
         raise FileNotFoundError(f"Text file not found: {path}")
 
-    try:
-        with open(path, "r", encoding="utf-8") as file:
-            return file.read()
-    except UnicodeDecodeError:
+    encodings = ['utf-8', 'utf-8-sig', 'utf-16', 'latin-1']
+    for enc in encodings:
         try:
-            with open(path, "r", encoding="latin-1") as file:
+            with open(path, "r", encoding=enc) as file:
                 return file.read()
+        except UnicodeDecodeError:
+            continue
         except Exception as err:
             raise RuntimeError(f"Failed to read text file '{path}': {err}") from err
-    except Exception as err:
-        raise RuntimeError(f"Failed to read text file '{path}': {err}") from err
+            
+    raise RuntimeError(f"Failed to decode text file '{path}'. Unsupported encoding.")
 
 
 

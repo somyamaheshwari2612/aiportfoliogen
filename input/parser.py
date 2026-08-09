@@ -56,6 +56,14 @@ def parse_resume(path: str) -> str:
     cleaned_text = re.sub(r'\n\s*\n', '\n\n', cleaned_text).strip()
 
     if not cleaned_text:
-        raise ValueError(f"Resume file '{path}' is empty or contains no readable text content.")
+        if ext == ".pdf":
+            raise ValueError("We couldn't extract any text from this PDF. If it is a scanned image, please use a text-based PDF or Word document.")
+        else:
+            raise ValueError(f"The uploaded {ext} file appears to be empty or unreadable.")
+            
+    # Protect Gemini from token overflow
+    MAX_CHARS = 30000
+    if len(cleaned_text) > MAX_CHARS:
+        raise ValueError("This resume is too long to process. Please upload a standard-length resume (under 30,000 characters).")
 
     return cleaned_text

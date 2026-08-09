@@ -56,6 +56,6 @@ def generate_portfolio_json(resume_text, prompt):
             raise ValueError(reason)
             
         return data
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Failed to parse JSON from Gemini response: {e}\nRaw Response: {text}")
+    except json.JSONDecodeError:
+        raise ValueError("Gemini returned incomplete JSON. Please try again.")
 
