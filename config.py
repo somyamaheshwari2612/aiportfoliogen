@@ -1,8 +1,9 @@
 import os
 
 class Config:
-    # Output Directory
-    OUTPUT_FOLDER = os.path.join(os.getcwd(), 'output')
+    # Output Directory — Vercel has a read-only filesystem, so use /tmp there
+    IS_VERCEL = os.environ.get('VERCEL') == '1'
+    OUTPUT_FOLDER = os.path.join('/tmp', 'output') if IS_VERCEL else os.path.join(os.getcwd(), 'output')
     
     # File Restrictions
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
