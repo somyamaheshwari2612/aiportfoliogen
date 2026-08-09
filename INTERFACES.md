@@ -46,24 +46,23 @@ def generate_portfolio_json(resume_text: str, prompt: str) -> dict
 }
 ```
 **Raises:**
-- `ValueError`: If the provided resume text is empty.
-- `ConnectionError`: If the Gemini API is unreachable or times out.
-- `RuntimeError`: If the model returns invalid JSON that cannot be parsed.
+- `ValueError`: If the provided resume text is empty, if the AI detects the file is not a resume (`is_resume=False`), or if the JSON cannot be parsed.
+- `Exception`: Bubbles up any underlying `google.genai` exceptions if the API is unreachable or times out.
 
 ---
 
 ### 3. Completeness Scoring (`analysis/completeness.py`)
 
 ```python
-def calculate_completeness(portfolio_json: dict) -> int
+```python
+def calculate_completeness(portfolio_json: dict) -> dict
 ```
 
 **Description:** Analyzes the structured portfolio dictionary and calculates a score representing how thoroughly the resume was parsed (e.g., checking if all standard sections exist).
 **Expected Input:** The dictionary output from `generate_portfolio_json`.
-**Expected Output:** `85` (An integer between 0 and 100).
+**Expected Output:** `{"score": 85, "missing": ["Education", "GitHub Profile"]}`
 **Raises:**
-- `TypeError`: If the input is not a dictionary.
-- `ValueError`: If the dictionary is completely empty or grossly malformed.
+- None. This module is guaranteed to act as a fail-safe. If the dictionary is completely empty or grossly malformed, it catches all internal exceptions and returns `{"score": 0, "missing": ["Could not calculate score due to malformed data"]}`.
 
 ---
 
