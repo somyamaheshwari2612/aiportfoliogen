@@ -26,26 +26,35 @@ def read_pdf(path: str) -> str:
     try:
         reader = pypdf.PdfReader(path)
         extracted_pages = []
+        secure_links = set()
 
         for page_num, page in enumerate(reader.pages):
             text = page.extract_text()
             if text:
                 extracted_pages.append(text)
+                
+            # Securely extract hidden hyperlinks
+            if '/Annots' in page:
+                for annot in page['/Annots']:
+                    obj = annot.get_object()
+                    if obj.get('/Subtype') == '/Link' and '/A' in obj and '/URI' in obj['/A']:
+                        uri = obj['/A']['/URI']
+                        if hasattr(uri, "get_object"):
+                            uri = uri.get_object()
+                        if isinstance(uri, str) and uri.lower().startswith(('http://', 'https://', 'mailto:')):
+                            secure_links.add(uri)
 
-        return "\n".join(extracted_pages)
+        full_text = "\n".join(extracted_pages)
+        if secure_links:
+            full_text += "\n\n--- EMBEDDED LINKS ---\n"
+            for link in secure_links:
+                full_text += f"- {link}\n"
+                
+        return full_text
     except PyPdfError as err:
         raise RuntimeError(f"Corrupted or invalid PDF file '{path}': {err}") from err
     except Exception as err:
         raise RuntimeError(f"Failed to read PDF file '{path}': {err}") from err
 
 
-def parse_pdf(path: str) -> str:
-    """Alias for read_pdf to maintain interface flexibility.
 
-    Args:
-        path (str): Path to the PDF file.
-
-    Returns:
-        str: Extracted text content from the PDF.
-    """
-    return read_pdf(path)

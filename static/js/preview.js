@@ -213,8 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Toggle Logic
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
-        const currentTheme = localStorage.getItem('app-theme') || 'light';
-        if (currentTheme === 'dark') {
+        const currentTheme = localStorage.getItem('app-theme') || 'dark';
+        if (currentTheme === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggleBtn.textContent = '🌙';
+        } else {
             document.documentElement.setAttribute('data-theme', 'dark');
             themeToggleBtn.textContent = '☀️';
         }

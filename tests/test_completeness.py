@@ -57,7 +57,9 @@ class TestCompletenessModule(unittest.TestCase):
                 "website": "https://janedoe.dev"
             }
         }
-        score = calculate_completeness(data)
+        result = calculate_completeness(data)
+        self.assertIsInstance(result, dict)
+        score = result["score"]
         self.assertIsInstance(score, int)
         self.assertGreaterEqual(score, 85)
         self.assertLessEqual(score, 100)
@@ -73,7 +75,8 @@ class TestCompletenessModule(unittest.TestCase):
             "experience": duplicate_experience,
             "skills": ["Python", "Python", "PYTHON", "python"]
         }
-        score = calculate_completeness(data)
+        result = calculate_completeness(data)
+        score = result["score"]
         self.assertLessEqual(score, 100)
         # Unique skills should count as 1 skill (3 pts), experience as 1 job (10 pts), personal info (10 pts)
         self.assertGreater(score, 0)
@@ -83,14 +86,14 @@ class TestCompletenessModule(unittest.TestCase):
             "personal_info": {"name": "Jane", "email": "jane@test.com"},
             "skills": ["Python", "Flask"]
         }
-        score_without_bonus = calculate_completeness(base_data)
+        score_without_bonus = calculate_completeness(base_data)["score"]
 
         base_data_with_bonus = dict(base_data)
         base_data_with_bonus["social_links"] = {
             "github": "https://github.com/jane",
             "linkedin": "https://linkedin.com/in/jane"
         }
-        score_with_bonus = calculate_completeness(base_data_with_bonus)
+        score_with_bonus = calculate_completeness(base_data_with_bonus)["score"]
 
         self.assertGreater(score_with_bonus, score_without_bonus)
 
@@ -102,7 +105,9 @@ class TestCompletenessModule(unittest.TestCase):
             "education": "Not a list",
             "skills": 456
         }
-        score = calculate_completeness(malformed_data)
+        result = calculate_completeness(malformed_data)
+        self.assertIsInstance(result, dict)
+        score = result["score"]
         self.assertIsInstance(score, int)
         self.assertGreaterEqual(score, 0)
         self.assertLessEqual(score, 100)

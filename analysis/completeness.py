@@ -55,6 +55,7 @@ def calculate_completeness(portfolio_json: dict) -> int:
 
     try:
         total_score = 0.0
+        missing = []
 
         # 1. Personal Info (Max 15 pts)
         personal_info = portfolio_json.get("personal_info")
@@ -69,19 +70,26 @@ def calculate_completeness(portfolio_json: dict) -> int:
             if _is_filled(personal_info.get("location")) or _is_filled(personal_info.get("headline")):
                 p_score += 2.5
             total_score += min(p_score, SECTION_WEIGHTS["personal_info"])
+            if p_score < 15.0:
+                missing.append("Complete Contact Info")
         elif _is_filled(portfolio_json.get("name")):
             # Fallback for flat schema if name exists at root
             total_score += 5.0
+            missing.append("Contact Details")
+        else:
+            missing.append("Personal Info")
 
         # 2. Summary (Max 10 pts)
         summary = portfolio_json.get("summary")
         if _is_filled(summary) and isinstance(summary, str) and len(summary.strip()) >= 10:
             total_score += SECTION_WEIGHTS["summary"]
+        else:
+            missing.append("Professional Summary")
 
         # 3. Experience (Max 35 pts with Deduplication & Item Caps)
         experience = portfolio_json.get("experience")
+        exp_score = 0.0
         if isinstance(experience, list) and experience:
-            exp_score = 0.0
             seen_experiences: Set[str] = set()
 
             for item in experience:
@@ -126,6 +134,8 @@ def calculate_completeness(portfolio_json: dict) -> int:
                 edu_score += 15.0
 
             total_score += min(edu_score, SECTION_WEIGHTS["education"])
+        else:
+            missing.append("Education")
 
         # 5. Skills (Max 15 pts with Deduplication & Item Caps)
         skills = portfolio_json.get("skills")
@@ -143,11 +153,15 @@ def calculate_completeness(portfolio_json: dict) -> int:
                 skills_score += 3.0  # 5 skills fill the 15 pts cap
 
             total_score += min(skills_score, SECTION_WEIGHTS["skills"])
+            if skills_score < 15.0:
+                missing.append("More Skills (only a few listed)")
+        else:
+            missing.append("Skills")
 
         # 6. Projects (Max 10 pts with Deduplication & Item Caps)
         projects = portfolio_json.get("projects")
+        proj_score = 0.0
         if isinstance(projects, list) and projects:
-            proj_score = 0.0
             seen_projects: Set[str] = set()
 
             for proj in projects:
@@ -159,7 +173,18 @@ def calculate_completeness(portfolio_json: dict) -> int:
                 seen_projects.add(title)
                 proj_score += 5.0  # 2 projects fill the 10 pts cap
 
-            total_score += min(proj_score, SECTION_WEIGHTS["projects"])
+            proj_weight = SECTION_WEIGHTS["projects"]
+            if exp_score == 0 and proj_score > 0:
+                proj_weight += SECTION_WEIGHTS["experience"]
+                
+            total_score += min(proj_score, proj_weight)
+
+        if exp_score == 0 and proj_score == 0:
+            missing.append("Experience or Projects")
+        elif exp_score == 0:
+            missing.append("Work Experience")
+        elif proj_score == 0:
+            missing.append("Projects")
 
         # 7. Optional Bonus Fields (Max 15 pts bonus to compensate missing areas)
         bonus_score = 0.0
@@ -183,6 +208,7 @@ def calculate_completeness(portfolio_json: dict) -> int:
         # Achievements / Certifications
         if _is_filled(portfolio_json.get("certifications")):
             bonus_score += 3.0
+            
         if _is_filled(portfolio_json.get("achievements")):
             bonus_score += 3.0
 
@@ -190,8 +216,8 @@ def calculate_completeness(portfolio_json: dict) -> int:
 
         # Enforce firm 0 to 100 range
         final_score = int(round(min(100.0, max(0.0, total_score))))
-        return final_score
+        return {"score": final_score, "missing": missing}
 
     except Exception:
-        # Fail-safe crash prevention: return 0 for unparseable / malformed JSON
-        return 0
+        # Fail-safe crash prevention: return valid dict for unparseable / malformed JSON
+        return {"score": 0, "missing": ["Could not calculate score due to malformed data"]}

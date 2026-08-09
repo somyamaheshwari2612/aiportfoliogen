@@ -44,13 +44,4 @@ def read_docx(path: str) -> str:
         raise RuntimeError(f"Corrupted or invalid DOCX file '{path}': {err}") from err
 
 
-def parse_docx(path: str) -> str:
-    """Alias for read_docx to maintain interface flexibility.
 
-    Args:
-        path (str): Path to the DOCX file.
-
-    Returns:
-        str: Extracted text content from the DOCX file.
-    """
-    return read_docx(path)

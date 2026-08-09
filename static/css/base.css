@@ -12,7 +12,7 @@
     --transition: all 0.2s ease-out;
 }
 
-[data-theme="dark"] {
+html[data-theme="dark"] {
     --primary-color: #7DA47B;
     --primary-hover: #6C916A;
     --bg-color: #18201A;
@@ -185,8 +185,16 @@ header p {
 }
 
 .theme-card:hover {
-    border-color: #cbd5e1;
     transform: translateY(-2px);
+}
+
+html:not([data-theme="dark"]) .theme-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px rgba(86, 115, 91, 0.4); /* #56735B with opacity */
+}
+
+html[data-theme="dark"] .theme-card:hover {
+    border-color: #6C916A;
 }
 
 .theme-card.selected {

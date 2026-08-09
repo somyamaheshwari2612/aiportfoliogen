@@ -7,6 +7,14 @@ def parse_docx(path):
     try:
         doc = docx.Document(path)
         text_parts = [para.text for para in doc.paragraphs if para.text.strip()]
+        
+        # Also extract text from tables, as many resumes use invisible tables for layout
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    if cell.text.strip():
+                        text_parts.append(cell.text)
+                        
         return "\n".join(text_parts)
     except docx.opc.exceptions.PackageNotFoundError as e:
         raise RuntimeError(f"Corrupted or invalid DOCX file: {e}")

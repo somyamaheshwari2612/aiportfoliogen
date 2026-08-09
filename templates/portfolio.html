@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ data.get('personal_info', {}).get('name', 'Portfolio') }} — Portfolio</title>
-  <link rel="stylesheet" href="static/css/{{ theme }}.css">
   <style>
     {{ base_css | safe }}
     {{ theme_css | safe }}
@@ -29,11 +28,11 @@
     {% if data.get('summary') %}<p class="summary">{{ data.get('summary') }}</p>{% endif %}
   </section>
 
-  {% if data.skills %}
+  {% if data.get('skills') %}
   <section class="skills">
     <h2>Skills</h2>
     <ul class="skill-list">
-      {% for skill in data.skills %}<li>{{ skill }}</li>{% endfor %}
+      {% for skill in data.get('skills', []) %}<li>{{ skill }}</li>{% endfor %}
     </ul>
   </section>
   {% endif %}
@@ -52,7 +51,7 @@
             </span>
           {% endif %}
           {% if proj.get('link') %}
-            <a href="{{ proj.get('link') }}" target="_blank" class="project-link" style="display: block; margin-top: 0.5rem; color: var(--primary-color); font-weight: 600; text-decoration: none;">View Project &rarr;</a>
+            <a href="{{ proj.get('link') }}" target="_blank" class="project-link">View Project &rarr;</a>
           {% endif %}
         </div>
       {% endfor %}
@@ -60,10 +59,10 @@
   </section>
   {% endif %}
 
-  {% if data.experience %}
+  {% if data.get('experience') %}
 <section class="experience">
   <h2>Experience</h2>
-  {% for exp in data.experience %}
+  {% for exp in data.get('experience', []) %}
     <div class="item">
       <h3>{% if exp.role %}{{ exp.role }} — {% endif %}{{ exp.company }}</h3>
       {% if exp.duration %}<span class="duration">{{ exp.duration }}</span>{% endif %}
@@ -81,12 +80,12 @@
 </section>
 {% endif %}
 
-  {% if data.education %}
+  {% if data.get('education') %}
   <section class="education">
     <h2>Education</h2>
-    {% for edu in data.education %}
+    {% for edu in data.get('education', []) %}
       <div class="item">
-        <strong>{{ edu.degree }}</strong> — {{ edu.institution }} ({{ edu.year }})
+        <strong>{{ edu.degree }}</strong>{% if edu.institution %} — {{ edu.institution }}{% endif %}{% if edu.year %} ({{ edu.year }}){% endif %}
       </div>
     {% endfor %}
   </section>
@@ -96,7 +95,7 @@
   <section class="certifications">
     <h2>Certifications</h2>
     <ul class="bullet-list">
-      {% for cert in data.certifications %}
+      {% for cert in data.get('certifications', []) %}
         <li>{{ cert }}</li>
       {% endfor %}
     </ul>
@@ -107,7 +106,7 @@
   <section class="achievements">
     <h2>Achievements</h2>
     <ul class="bullet-list">
-      {% for ach in data.achievements %}
+      {% for ach in data.get('achievements', []) %}
         <li>{{ ach }}</li>
       {% endfor %}
     </ul>
@@ -118,7 +117,7 @@
   <section class="languages">
     <h2>Languages</h2>
     <ul class="skill-list">
-      {% for lang in data.languages %}
+      {% for lang in data.get('languages', []) %}
         <li>{{ lang }}</li>
       {% endfor %}
     </ul>

@@ -34,13 +34,4 @@ def read_txt(path: str) -> str:
         raise RuntimeError(f"Failed to read text file '{path}': {err}") from err
 
 
-def parse_txt(path: str) -> str:
-    """Alias for read_txt to ensure backwards and interface compatibility.
 
-    Args:
-        path (str): The absolute or relative file path to the text file.
-
-    Returns:
-        str: The raw text extracted from the file.
-    """
-    return read_txt(path)

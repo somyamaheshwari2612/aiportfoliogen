@@ -1,5 +1,5 @@
 import os
-from document_input.parser import parse_resume
+from input.parser import parse_resume
 from ai.gemini import generate_portfolio_json
 from analysis.completeness import calculate_completeness
 from generator.html_generator import generate_portfolio

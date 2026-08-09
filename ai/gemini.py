@@ -33,14 +33,19 @@ def generate_portfolio_json(resume_text, prompt):
         
     text = response.text.strip()
     
-    # Strip markdown code blocks just in case the model ignores the mime_type
-    if text.startswith("```json"):
-        text = text[7:]
-    elif text.startswith("```"):
-        text = text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
+    # Robustly extract the JSON block to ignore any conversational filler
+    # Finds the first '{' and the last '}'
+    start_idx = text.find('{')
+    end_idx = text.rfind('}')
+    
+    if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+        text = text[start_idx:end_idx+1]
+        
     text = text.strip()
+    
+    # Sometimes Gemini hallucinates markdown list dashes before JSON keys when it gets confused
+    # e.g., `, - "technologies":` instead of `, "technologies":`
+    text = re.sub(r'([{,])\s*-\s*"', r'\1 "', text)
     
     try:
         data = json.loads(text)

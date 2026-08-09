@@ -9,9 +9,9 @@ import docx
 import pypdf
 
 from input.parser import parse_resume
-from input.txt_parser import read_txt, parse_txt
-from input.pdf_parser import read_pdf, parse_pdf
-from input.docx_parser import read_docx, parse_docx
+from input.txt_parser import read_txt
+from input.pdf_parser import read_pdf
+from input.docx_parser import read_docx
 
 
 class TestResumeParser(unittest.TestCase):
@@ -32,7 +32,6 @@ class TestResumeParser(unittest.TestCase):
         expected = "John Doe\nSoftware Engineer\nSkills: Python, Flask"
         self.assertEqual(parsed, expected)
         self.assertEqual(read_txt(txt_path), raw_content)
-        self.assertEqual(parse_txt(txt_path), raw_content)
 
     def test_parse_pdf_valid(self):
         pdf_path = os.path.join(self.temp_dir.name, "resume.pdf")
@@ -69,7 +68,6 @@ class TestResumeParser(unittest.TestCase):
         self.assertNotIn("\n\n", parsed)
 
         self.assertIn("Jane Doe", read_docx(docx_path))
-        self.assertIn("Jane Doe", parse_docx(docx_path))
 
     def test_sample_resume_txt(self):
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

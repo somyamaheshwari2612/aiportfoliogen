@@ -4,7 +4,7 @@ from .txt_parser import parse_txt
 from .pdf_parser import parse_pdf
 from .docx_parser import parse_docx
 
-def parse_resume(path):
+def parse_resume(path: str) -> str:
     """
     Routes the file to the correct parser based on extension and cleans the resulting text.
     """
@@ -26,6 +26,8 @@ def parse_resume(path):
     if not raw_text or not raw_text.strip():
         raise ValueError("Parsed document is empty or could not be read.")
 
-    # Global whitespace cleaning
-    cleaned_text = re.sub(r'\s+', ' ', raw_text).strip()
+    # Global whitespace cleaning (preserve newlines for AI context)
+    # Replace multiple spaces/tabs with single space, and multiple newlines with single newline
+    cleaned_text = re.sub(r'[ \t]+', ' ', raw_text)
+    cleaned_text = re.sub(r'\n\s*\n', '\n', cleaned_text).strip()
     return cleaned_text

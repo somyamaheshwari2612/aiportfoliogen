@@ -50,12 +50,10 @@ def parse_resume(path: str) -> str:
     else:
         raise ValueError(f"No parser available for extension '{ext}'")
 
-    # Normalize text: strip lines, eliminate empty/blank lines
-    normalized_lines = [
-        line.strip() for line in raw_text.splitlines() if line.strip()
-    ]
-
-    cleaned_text = "\n".join(normalized_lines)
+    import re
+    # Normalize text: preserve single newlines but squash excessive blank lines and spaces
+    cleaned_text = re.sub(r'[ \t]+', ' ', raw_text)
+    cleaned_text = re.sub(r'\n\s*\n', '\n\n', cleaned_text).strip()
 
     if not cleaned_text:
         raise ValueError(f"Resume file '{path}' is empty or contains no readable text content.")

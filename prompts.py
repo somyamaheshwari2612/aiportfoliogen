@@ -24,6 +24,7 @@ Rules:
 9. ONLY populate link fields (social_links, project links) with valid absolute URLs (starting with http:// or https://). If the resume just says "LinkedIn" without a URL, leave the field blank ("").
 10. FIRST, analyze if the uploaded document is actually a resume/CV. If it is a recipe, random article, or gibberish, set "is_resume" to false. Otherwise, set it to true.
 11. If "is_resume" is false, generate a short, playful, and sassy "rejection_reason" tailored to the uploaded text (e.g., "Hold up! Are you trying to trick me with a grocery list? 😉"). If it is a resume, leave this field blank.
+12. If the resume contains a link labeled "Portfolio" or "Portfolio Website", map it to the "website" field under "social_links".
 
 Return the JSON in the following structure:
 
