@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ data.personal_info.name }} — Portfolio</title>
+  <title>{{ data.get('personal_info', {}).get('name', 'Portfolio') }} — Portfolio</title>
   <link rel="stylesheet" href="static/css/{{ theme }}.css">
   <style>
     {{ base_css | safe }}
@@ -11,10 +11,22 @@
   </style>
 </head>
 <body>
+<div class="portfolio-container">
 
   <section class="hero">
-    <h1>{{ data.personal_info.name or "Your Name" }}</h1>
-    {% if data.summary %}<p class="summary">{{ data.summary }}</p>{% endif %}
+    <h1>{{ data.get('personal_info', {}).get('name', 'Your Name') }}</h1>
+    
+    {% if data.get('personal_info') or data.get('social_links') %}
+    <div class="contact-pills">
+      {% if data.get('personal_info', {}).get('email') %}<a href="mailto:{{ data.get('personal_info', {}).get('email') }}" class="pill">{{ data.get('personal_info', {}).get('email') }}</a>{% endif %}
+      {% if data.get('personal_info', {}).get('location') %}<span class="pill">{{ data.get('personal_info', {}).get('location') }}</span>{% endif %}
+      {% if data.get('social_links', {}).get('linkedin') %}<a href="{{ data.get('social_links', {}).get('linkedin') }}" target="_blank" class="pill">LinkedIn</a>{% endif %}
+      {% if data.get('social_links', {}).get('github') %}<a href="{{ data.get('social_links', {}).get('github') }}" target="_blank" class="pill">GitHub</a>{% endif %}
+      {% if data.get('social_links', {}).get('website') %}<a href="{{ data.get('social_links', {}).get('website') }}" target="_blank" class="pill">Website</a>{% endif %}
+    </div>
+    {% endif %}
+    
+    {% if data.get('summary') %}<p class="summary">{{ data.get('summary') }}</p>{% endif %}
   </section>
 
   {% if data.skills %}
@@ -32,9 +44,16 @@
     <div class="grid">
       {% for proj in data.projects %}
         <div class="card">
-          <h3>{{ proj.title }}</h3>
-          <p>{{ proj.description }}</p>
-          {% if proj.technologies %}<span class="tech">{{ proj.technologies }}</span>{% endif %}
+          <h3>{{ proj.get('title', '') }}</h3>
+          <p>{{ proj.get('description', '') }}</p>
+          {% if proj.get('technologies') %}
+            <span class="tech">
+              {{ proj.get('technologies') | join(', ') if proj.get('technologies') is iterable and proj.get('technologies') is not string else proj.get('technologies') }}
+            </span>
+          {% endif %}
+          {% if proj.get('link') %}
+            <a href="{{ proj.get('link') }}" target="_blank" class="project-link" style="display: block; margin-top: 0.5rem; color: var(--primary-color); font-weight: 600; text-decoration: none;">View Project &rarr;</a>
+          {% endif %}
         </div>
       {% endfor %}
     </div>
@@ -73,18 +92,39 @@
   </section>
   {% endif %}
 
-  {% if data.personal_info or data.social_links %}
-  <section class="contact">
-    <h2>Contact</h2>
-    <p>
-      {% if data.personal_info.email %}Email: {{ data.personal_info.email }}<br>{% endif %}
-      {% if data.personal_info.location %}Location: {{ data.personal_info.location }}<br>{% endif %}
-      {% if data.social_links.linkedin %}<a href="{{ data.social_links.linkedin }}">LinkedIn</a> {% endif %}
-      {% if data.social_links.github %}<a href="{{ data.social_links.github }}">GitHub</a> {% endif %}
-      {% if data.social_links.website %}<a href="{{ data.social_links.website }}">Website</a>{% endif %}
-    </p>
+  {% if data.get('certifications') %}
+  <section class="certifications">
+    <h2>Certifications</h2>
+    <ul class="bullet-list">
+      {% for cert in data.certifications %}
+        <li>{{ cert }}</li>
+      {% endfor %}
+    </ul>
   </section>
   {% endif %}
-
+  
+  {% if data.get('achievements') %}
+  <section class="achievements">
+    <h2>Achievements</h2>
+    <ul class="bullet-list">
+      {% for ach in data.achievements %}
+        <li>{{ ach }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+  
+  {% if data.get('languages') %}
+  <section class="languages">
+    <h2>Languages</h2>
+    <ul class="skill-list">
+      {% for lang in data.languages %}
+        <li>{{ lang }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+<footer></footer>
+</div>
 </body>
 </html>

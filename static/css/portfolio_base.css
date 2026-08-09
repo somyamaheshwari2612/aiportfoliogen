@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap');
 
 * {
     margin: 0;
@@ -7,11 +7,14 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', sans-serif;
     line-height: 1.6;
-    padding: 3rem 2rem;
+}
+
+.portfolio-container {
     max-width: 900px;
     margin: 0 auto;
+    padding: 3rem 2rem;
 }
 
 section {
@@ -33,12 +36,16 @@ section:nth-child(6) { animation-delay: 0.6s; }
     to { opacity: 1; transform: translateY(0); }
 }
 
-h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; font-weight: 800; letter-spacing: -0.03em; }
-h2 { font-size: 2rem; margin-bottom: 2rem; font-weight: 700; letter-spacing: -0.02em; }
-h3 { font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Newsreader', serif;
+}
+
+h1 { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 600; }
 
 .summary {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
     max-width: 800px;
 }
 
@@ -89,15 +96,40 @@ h3 { font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600; }
     font-weight: 500;
 }
 
-.contact p {
-    line-height: 2;
+.bullet-list {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-top: 1rem;
+    line-height: 1.8;
 }
 
-.contact a {
+.bullet-list li {
+    margin-bottom: 0.5rem;
+}
+
+/* Contact Pills */
+.contact-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.pill {
     display: inline-block;
-    margin-right: 1.5rem;
-    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
     font-weight: 600;
+    text-decoration: none;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
     transition: all 0.2s ease;
 }
-.contact a:hover { opacity: 0.8; }
+
+.pill:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    transform: translateY(-2px);
+}

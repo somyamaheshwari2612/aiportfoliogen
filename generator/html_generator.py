@@ -1,7 +1,6 @@
 import os
-from jinja2 import Environment, FileSystemLoader, TemplateError
-
-VALID_THEMES = ["modern", "minimal", "glass", "dark"]
+from jinja2 import Environment, FileSystemLoader, TemplateError, select_autoescape
+from config import Config
 
 
 def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
@@ -10,11 +9,14 @@ def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
     theme: 'modern' | 'minimal' | 'glass' | 'dark'
     Returns: absolute path to the saved portfolio.html file
     """
-    if theme not in VALID_THEMES:
-        raise ValueError(f"Unsupported theme '{theme}'. Must be one of {VALID_THEMES}")
+    if theme not in Config.THEMES:
+        raise ValueError(f"Unsupported theme '{theme}'. Must be one of {Config.THEMES}")
 
     try:
-        env = Environment(loader=FileSystemLoader("templates"))
+        env = Environment(
+            loader=FileSystemLoader("templates"),
+            autoescape=select_autoescape(['html', 'xml'])
+        )
         template = env.get_template("portfolio.html")
         
         # Read CSS to inline it so the downloaded HTML works standalone
@@ -27,7 +29,7 @@ def generate_portfolio(portfolio_json: dict, theme: str = "modern") -> str:
     except TemplateError as e:
         raise RuntimeError(f"Jinja2 template rendering failed: {e}")
 
-    output_dir = "output"
+    output_dir = Config.OUTPUT_FOLDER
     output_path = os.path.join(output_dir, "portfolio.html")
 
     try:
@@ -65,6 +67,6 @@ if __name__ == "__main__":
         ]
     }
 
-    for t in VALID_THEMES:
+    for t in Config.THEMES:
         path = generate_portfolio(sample_data, theme=t)
         print(f"Generated: {path}")

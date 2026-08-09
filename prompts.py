@@ -21,11 +21,15 @@ Rules:
 5. Preserve project names, company names, technologies, and institutions exactly as written whenever possible.
 6. Return ONLY valid JSON.
 7. Do NOT wrap the JSON in Markdown.
-8. Do NOT include explanations, comments, or extra text.
+9. ONLY populate link fields (social_links, project links) with valid absolute URLs (starting with http:// or https://). If the resume just says "LinkedIn" without a URL, leave the field blank ("").
+10. FIRST, analyze if the uploaded document is actually a resume/CV. If it is a recipe, random article, or gibberish, set "is_resume" to false. Otherwise, set it to true.
+11. If "is_resume" is false, generate a short, playful, and sassy "rejection_reason" tailored to the uploaded text (e.g., "Hold up! Are you trying to trick me with a grocery list? 😉"). If it is a resume, leave this field blank.
 
 Return the JSON in the following structure:
 
 {
+  "is_resume": true,
+  "rejection_reason": "",
   "personal_info": {
     "name": "",
     "headline": "",
@@ -59,9 +63,9 @@ Return the JSON in the following structure:
   ],
   "projects": [
     {
-      "name": "",
+      "title": "",
       "description": "",
-      "tech_stack": [],
+      "technologies": [],
       "link": ""
     }
   ],

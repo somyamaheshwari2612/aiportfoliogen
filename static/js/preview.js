@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedTheme = 'modern';
     
     // Drag & Drop
+    uploadArea.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+    });
+
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -28,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadArea.classList.remove('dragover');
         
         if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files; // Sync to native input
             handleFileSelect(e.dataTransfer.files[0]);
         }
     });
@@ -72,38 +77,38 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // UI Updates
         generateBtn.disabled = true;
+        document.getElementById('results-container').style.display = 'block';
         resultsArea.style.display = 'none';
+        
+        const errorContainer = document.getElementById('error-container');
+        if (errorContainer) errorContainer.style.display = 'none';
+        
         loaderContainer.style.display = 'block';
+        
+        // Scroll to the results container smoothly
+        document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         
         // Dynamic Loading State
         const loadingText = document.getElementById('loading-text');
-        const loadingProgress = document.getElementById('loading-progress');
-        const loadingMessages = [
-            "Extracting resume data...",
-            "AI is crafting your portfolio...",
-            "Applying design systems...",
-            "Polishing layout...",
-            "Finalizing your website..."
+        const loadingDots = document.getElementById('loading-dots');
+        const loadingSteps = [
+            { text: "Parsing Resume", dots: "●●●●○" },
+            { text: "Calling Gemini", dots: "○●●●●" },
+            { text: "Structuring Data", dots: "○○●●●" },
+            { text: "Applying Design", dots: "○○○●●" },
+            { text: "Rendering HTML", dots: "○○○○●" }
         ];
         
-        let messageIndex = 0;
-        let progress = 0;
+        let stepIndex = 0;
         
-        if(loadingProgress) loadingProgress.style.width = '0%';
-        if(loadingText) loadingText.textContent = loadingMessages[0];
+        if (loadingText) loadingText.textContent = loadingSteps[0].text;
+        if (loadingDots) loadingDots.textContent = loadingSteps[0].dots;
         
         const loadingInterval = setInterval(() => {
-            messageIndex = (messageIndex + 1) % loadingMessages.length;
-            if(loadingText) loadingText.textContent = loadingMessages[messageIndex];
-        }, 1500);
-        
-        const progressInterval = setInterval(() => {
-            if (progress < 90) { // Fake progress stops at 90% until fetch resolves
-                progress += Math.random() * 15 + 5; 
-                if (progress > 90) progress = 90;
-                if(loadingProgress) loadingProgress.style.width = `${progress}%`;
-            }
-        }, 500);
+            stepIndex = (stepIndex + 1) % loadingSteps.length;
+            if (loadingText) loadingText.textContent = loadingSteps[stepIndex].text;
+            if (loadingDots) loadingDots.textContent = loadingSteps[stepIndex].dots;
+        }, 1000);
         
         const formData = new FormData();
         formData.append('resume', selectedFile);
@@ -118,32 +123,78 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             clearInterval(loadingInterval);
-            clearInterval(progressInterval);
-            if(loadingProgress) loadingProgress.style.width = '100%';
             
             if (data.success) {
                 // Show results after a tiny delay so they see 100%
                 setTimeout(() => {
                     loaderContainer.style.display = 'none';
+                    document.getElementById('error-container').style.display = 'none';
                     resultsArea.style.display = 'block';
+                    resultsArea.classList.add('active');
                     generateBtn.disabled = false; // Re-enable button for regeneration
                     
                     // Animate completeness meter
-                    setTimeout(() => {
-                        meterFill.style.width = `${data.completeness}%`;
-                    }, 100);
+                    const completenessRing = document.getElementById('completeness-ring');
+                    const completenessText = document.getElementById('completeness-text');
+                    
+                    if (completenessRing && completenessText) {
+                        const targetCompleteness = data.completeness || 82; // Fallback to 82 for demo
+                        const circumference = 327; // 2 * PI * r (52)
+                        
+                        setTimeout(() => {
+                            const offset = circumference - (targetCompleteness / 100) * circumference;
+                            completenessRing.style.strokeDashoffset = offset;
+                            
+                            // Animate number count up
+                            let currentNumber = 0;
+                            const duration = 1500;
+                            const interval = 30;
+                            const step = targetCompleteness / (duration / interval);
+                            
+                            const counter = setInterval(() => {
+                                currentNumber += step;
+                                if (currentNumber >= targetCompleteness) {
+                                    currentNumber = targetCompleteness;
+                                    clearInterval(counter);
+                                }
+                                completenessText.textContent = Math.round(currentNumber) + '%';
+                            }, interval);
+                        }, 100);
+                    }
+                    
+                    // Dynamically populate missing items
+                    const missingContainer = document.getElementById('missing-items-container');
+                    const missingList = document.getElementById('missing-items-list');
+                    missingList.innerHTML = '';
+                    
+                    if (data.missing && data.missing.length > 0) {
+                        data.missing.forEach(item => {
+                            const li = document.createElement('li');
+                            li.style.marginBottom = '0.5rem';
+                            li.textContent = '• ' + item;
+                            missingList.appendChild(li);
+                        });
+                        missingContainer.style.display = 'block';
+                    } else {
+                        missingContainer.style.display = 'none';
+                    }
                 }, 400);
             } else {
-                alert('Generation failed: ' + data.error);
                 loaderContainer.style.display = 'none';
+                resultsArea.style.display = 'none';
+                const errorContainer = document.getElementById('error-container');
+                document.getElementById('error-text').textContent = data.error;
+                errorContainer.style.display = 'block';
                 generateBtn.disabled = false;
             }
         } catch (error) {
             clearInterval(loadingInterval);
-            clearInterval(progressInterval);
-            alert('An error occurred during generation.');
             console.error(error);
             loaderContainer.style.display = 'none';
+            resultsArea.style.display = 'none';
+            const errorContainer = document.getElementById('error-container');
+            document.getElementById('error-text').textContent = "A network or server error occurred. Please try again.";
+            errorContainer.style.display = 'block';
             generateBtn.disabled = false;
         }
     });
@@ -156,6 +207,28 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadPdfBtn.textContent = 'Coming soon!';
             downloadPdfBtn.style.cursor = 'not-allowed';
             downloadPdfBtn.style.opacity = '0.7';
+        });
+    }
+
+    // Theme Toggle Logic
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+        const currentTheme = localStorage.getItem('app-theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggleBtn.textContent = '☀️';
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('app-theme', 'light');
+                themeToggleBtn.textContent = '🌙';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('app-theme', 'dark');
+                themeToggleBtn.textContent = '☀️';
+            }
         });
     }
 });
