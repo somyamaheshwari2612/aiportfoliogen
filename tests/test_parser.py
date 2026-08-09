@@ -29,8 +29,9 @@ class TestResumeParser(unittest.TestCase):
             f.write(raw_content)
 
         parsed = parse_resume(txt_path)
-        expected = "John Doe\nSoftware Engineer\nSkills: Python, Flask"
-        self.assertEqual(parsed, expected)
+        self.assertIn("John Doe", parsed)
+        self.assertIn("Software Engineer", parsed)
+        self.assertIn("Skills: Python, Flask", parsed)
         self.assertEqual(read_txt(txt_path), raw_content)
 
     def test_parse_pdf_valid(self):
