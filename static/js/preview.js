@@ -119,6 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 body: formData
             });
+            if (!response.ok) {
+                if (response.status === 413) {
+                    throw new Error('File size limit exceeded. Please upload a smaller resume (under 4.5 MB).');
+                }
+                let errorMsg = 'Server error. Please try again.';
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.error || errorMsg;
+                } catch { /* response was not JSON */ }
+                throw new Error(errorMsg);
+            }
             
             const data = await response.json();
             
